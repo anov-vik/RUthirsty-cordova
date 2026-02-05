@@ -16,15 +16,33 @@
 
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
             font-family: system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
             margin: 0;
             padding: 20px;
             min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         .app {
             max-width: 100%;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .header {
@@ -40,11 +58,16 @@
         }
 
         .today-stats {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 20px;
             margin: 20px 0;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
         }
 
         .today-stats p {
@@ -60,30 +83,82 @@
             color: #ffd700;
         }
 
+        .reminder-countdown {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            padding: 16px;
+            margin: 10px 0 0 0;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .reminder-countdown p {
+            font-size: 16px;
+            font-weight: 500;
+            margin: 0;
+            color: white;
+        }
+
+        #countdown {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4facfe;
+            font-family: 'Courier New', monospace;
+        }
+
         .check-in-section {
             text-align: center;
             margin: 40px 0;
         }
 
         .check-in-btn {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
             border-radius: 50%;
-            width: 150px;
-            height: 150px;
+            width: 160px;
+            height: 160px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow:
+                0 15px 45px rgba(0, 0, 0, 0.2),
+                inset 0 2px 0 rgba(255, 255, 255, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
             margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .check-in-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .check-in-btn:hover::before {
+            opacity: 1;
         }
 
         .check-in-btn:active {
             transform: scale(0.95);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.2),
+                inset 0 2px 0 rgba(255, 255, 255, 0.5);
         }
 
         .btn-icon {
@@ -98,18 +173,24 @@
         }
 
         .records-section {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 25px;
             margin-top: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            box-shadow:
+                0 15px 50px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
         }
 
         .records-section h2 {
             font-size: 20px;
             font-weight: 600;
             margin: 0 0 20px 0;
-            color: #333;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
         .records-list {
@@ -119,21 +200,35 @@
 
         .empty-message {
             text-align: center;
-            color: #999;
+            color: rgba(255, 255, 255, 0.7);
             padding: 40px 20px;
             font-size: 14px;
         }
 
         .record-item {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 15px;
+            padding: 16px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow:
+                0 4px 20px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
             animation: slideIn 0.3s ease;
+            transition: all 0.3s ease;
+        }
+
+        .record-item:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateY(-2px);
+            box-shadow:
+                0 6px 25px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
         }
 
         @keyframes slideIn {
@@ -181,6 +276,9 @@
             <div class="today-stats">
                 <p>今日已喝水: <span id="todayCount">0</span> 次</p>
             </div>
+            <div class="reminder-countdown">
+                <p>⏰ 下次提醒: <span id="countdown">--:--:--</span></p>
+            </div>
         </div>
 
         <div class="check-in-section">
@@ -200,7 +298,12 @@
 
     <script>
         const STORAGE_KEY = 'waterCheckInRecords';
+        const REMINDER_INTERVAL = 2 * 60 * 60 * 1000; // 2小时（毫秒）
+        const LAST_REMINDER_KEY = 'lastReminderTime';
+
         let records = [];
+        let reminderTimer = null;
+        let countdownTimer = null;
 
         // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -210,6 +313,13 @@
 
             const checkInBtn = document.getElementById('checkInBtn');
             checkInBtn.addEventListener('click', handleCheckIn);
+
+            // 启动定时提醒
+            startReminder();
+            requestNotificationPermission();
+
+            // 启动倒计时显示
+            startCountdownDisplay();
         });
 
         function loadRecords() {
@@ -242,6 +352,9 @@
             }, 500);
 
             updateUI();
+
+            // 打卡后重置提醒时间
+            resetReminder();
         }
 
         function getTodayCount() {
@@ -268,6 +381,126 @@
                     <div class="record-icon">💧</div>
                 </div>
             `).join('');
+        }
+
+        // 请求通知权限
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    console.log('通知权限:', permission);
+                });
+            }
+        }
+
+        // 显示通知提醒
+        function showNotification() {
+            const title = '💧 喝水提醒';
+            const options = {
+                body: '该喝水啦！记得补充水分哦~',
+                icon: 'img/logo.png',
+                badge: 'img/logo.png',
+                vibrate: [200, 100, 200],
+                tag: 'water-reminder',
+                requireInteraction: false
+            };
+
+            // 浏览器通知
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, options);
+            } else {
+                // 浏览器alert作为后备方案
+                alert('💧 该喝水啦！记得补充水分哦~');
+            }
+        }
+
+        // 启动定时提醒
+        function startReminder() {
+            // 清除现有定时器
+            if (reminderTimer) {
+                clearInterval(reminderTimer);
+            }
+
+            // 检查上次提醒时间
+            checkAndRemind();
+
+            // 设置定时器，每分钟检查一次
+            reminderTimer = setInterval(checkAndRemind, 60 * 1000);
+            console.log('定时提醒已启动，每2小时提醒一次');
+        }
+
+        // 检查是否需要提醒
+        function checkAndRemind() {
+            const now = Date.now();
+            const lastReminder = localStorage.getItem(LAST_REMINDER_KEY);
+
+            if (!lastReminder) {
+                // 首次运行，设置初始时间
+                localStorage.setItem(LAST_REMINDER_KEY, now.toString());
+                console.log('初始化提醒时间');
+                return;
+            }
+
+            const timeSinceLastReminder = now - parseInt(lastReminder);
+            const remainingTime = REMINDER_INTERVAL - timeSinceLastReminder;
+
+            // 如果距离上次提醒超过2小时，显示提醒
+            if (timeSinceLastReminder >= REMINDER_INTERVAL) {
+                console.log('触发喝水提醒');
+                showNotification();
+                localStorage.setItem(LAST_REMINDER_KEY, now.toString());
+            } else {
+                // 显示剩余时间（用于调试）
+                const remainingMinutes = Math.floor(remainingTime / (60 * 1000));
+                console.log(`距离下次提醒还有 ${remainingMinutes} 分钟`);
+            }
+        }
+
+        // 重置提醒时间（打卡后调用）
+        function resetReminder() {
+            const now = Date.now();
+            localStorage.setItem(LAST_REMINDER_KEY, now.toString());
+            console.log('提醒时间已重置，2小时后将再次提醒');
+        }
+
+        // 更新倒计时显示
+        function updateCountdownDisplay() {
+            const now = Date.now();
+            const lastReminder = localStorage.getItem(LAST_REMINDER_KEY);
+
+            if (!lastReminder) {
+                document.getElementById('countdown').textContent = '--:--:--';
+                return;
+            }
+
+            const timeSinceLastReminder = now - parseInt(lastReminder);
+            const remainingTime = REMINDER_INTERVAL - timeSinceLastReminder;
+
+            if (remainingTime <= 0) {
+                document.getElementById('countdown').textContent = '00:00:00';
+                return;
+            }
+
+            // 计算小时、分钟、秒
+            const hours = Math.floor(remainingTime / (60 * 60 * 1000));
+            const minutes = Math.floor((remainingTime % (60 * 60 * 1000)) / (60 * 1000));
+            const seconds = Math.floor((remainingTime % (60 * 1000)) / 1000);
+
+            // 格式化显示
+            const formattedTime =
+                String(hours).padStart(2, '0') + ':' +
+                String(minutes).padStart(2, '0') + ':' +
+                String(seconds).padStart(2, '0');
+
+            document.getElementById('countdown').textContent = formattedTime;
+        }
+
+        // 启动倒计时显示
+        function startCountdownDisplay() {
+            // 立即更新一次
+            updateCountdownDisplay();
+
+            // 每秒更新一次
+            countdownTimer = setInterval(updateCountdownDisplay, 1000);
         }
     </script>
 </body>
