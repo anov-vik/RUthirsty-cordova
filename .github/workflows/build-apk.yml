@@ -42,6 +42,13 @@ jobs:
         with:
           gradle-version: '8.7'
 
+      - name: 📲 安装 Android SDK 组件
+        run: |
+          echo "📥 安装 Android SDK Build Tools..."
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+            "build-tools;33.0.2" \
+            "platforms;android-33" || true
+
       - name: 📦 安装 Cordova CLI
         run: |
           npm install -g cordova@13.0.0
