@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+    <title>喝水打卡</title>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+<body>
+    <div class="app">
+        <div class="header">
+            <h1>💧 喝水打卡</h1>
+            <div class="date" id="currentDate"></div>
+        </div>
+
+        <!-- 目标达成提示 -->
+        <div class="celebration-toast" id="celebrationToast">
+            <div class="toast-content">
+                <div class="toast-icon">🎉</div>
+                <div class="toast-message">
+                    <div class="toast-title">太棒了！</div>
+                    <div class="toast-text">今天已经喝够1000ml水了！</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-number" id="todayCount">0</div>
+                <div class="stat-label">今日打卡次数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalWater">0</div>
+                <div class="stat-label">今日饮水量 (ml)</div>
+            </div>
+        </div>
+
+        <div class="checkin-container">
+            <button class="checkin-btn" id="checkinBtn">
+                <span class="btn-icon">💧</span>
+                <span class="btn-text">打卡喝水</span>
+            </button>
+            <div class="water-input">
+                <label for="waterAmount">饮水量:</label>
+                <input type="number" id="waterAmount" value="200" min="50" max="1000" step="50">
+                <span>ml</span>
+            </div>
+        </div>
+
+        <!-- 提醒设置 -->
+        <div class="settings-container">
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-icon">⏰</div>
+                    <div class="setting-content">
+                        <div class="setting-title">定时提醒</div>
+                        <div class="setting-desc">每天 6:30、9:30、11:30、13:30、17:30、19:30、21:30 提醒喝水</div>
+                    </div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="reminderToggle" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="records-container">
+            <div class="records-header">
+                <h2>今日记录</h2>
+                <button class="clear-btn" id="clearBtn">清空</button>
+            </div>
+            <div class="records-list" id="recordsList">
+                <div class="empty-state">
+                    <p>还没有打卡记录哦</p>
+                    <p>点击上方按钮开始打卡吧！</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="js/index.js"></script>
+</body>
+</html>

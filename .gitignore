@@ -1,0 +1,30 @@
+# Cordova
+platforms/
+plugins/
+node_modules/
+
+# Build outputs
+*.apk
+*.aab
+*.ipa
+*.class
+*.dex
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary
+.tmp/
+temp/

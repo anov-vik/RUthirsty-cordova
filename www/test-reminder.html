@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>提醒功能测试页面</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .info {
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .time-list {
+            list-style: none;
+            padding: 0;
+        }
+        .time-list li {
+            padding: 10px;
+            background: #f9fafb;
+            margin: 5px 0;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+        .btn-success {
+            background: #10b981;
+        }
+        .btn-danger {
+            background: #ef4444;
+        }
+        .test-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e5e7eb;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⏰ 提醒功能测试</h1>
+
+        <div class="info">
+            <strong>提醒时间点：</strong>
+            <ul class="time-list">
+                <li><span>06:30</span> <span>早晨提醒</span></li>
+                <li><span>09:30</span> <span>上午提醒</span></li>
+                <li><span>11:30</span> <span>午餐前提醒</span></li>
+                <li><span>13:30</span> <span>下午提醒</span></li>
+                <li><span>17:30</span> <span>傍晚提醒</span></li>
+                <li><span>19:30</span> <span>晚餐后提醒</span></li>
+                <li><span>21:30</span> <span>睡前提醒</span></li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>快速测试</h2>
+            <p>点击下面的按钮立即触发提醒通知（仅用于测试）：</p>
+
+            <button class="btn" onclick="testNotification()">🔔 测试通知</button>
+            <button class="btn btn-success" onclick="requestPermission()">✅ 请求通知权限</button>
+            <button class="btn btn-danger" onclick="clearTestData()">🗑️ 清除测试数据</button>
+
+            <div id="status"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>模拟时间点提醒</h2>
+            <p>点击下面的按钮模拟特定时间点的提醒：</p>
+            <div id="timeButtons"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>使用说明</h2>
+            <ol>
+                <li>首先点击"请求通知权限"按钮，允许浏览器发送通知</li>
+                <li>点击"测试通知"按钮查看通知效果</li>
+                <li>在实际应用中，系统会在每天的固定时间点自动发送提醒</li>
+                <li>提醒只会在应用打开时发送（浏览器或APP运行中）</li>
+                <li>可以在主应用的设置中开启/关闭提醒功能</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        const reminderTimes = ['06:30', '09:30', '11:30', '13:30', '17:30', '19:30', '21:30'];
+
+        // 生成时间点按钮
+        const timeButtons = document.getElementById('timeButtons');
+        reminderTimes.forEach(time => {
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            btn.textContent = `${time} 提醒`;
+            btn.onclick = () => simulateReminder(time);
+            timeButtons.appendChild(btn);
+        });
+
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.textContent = message;
+        }
+
+        function requestPermission() {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        showStatus('✅ 通知权限已授予！', 'success');
+                    } else {
+                        showStatus('❌ 通知权限被拒绝', 'info');
+                    }
+                });
+            } else {
+                showStatus('❌ 您的浏览器不支持通知功能', 'info');
+            }
+        }
+
+        function testNotification() {
+            if (Notification.permission !== 'granted') {
+                showStatus('⚠️ 请先请求通知权限', 'info');
+                return;
+            }
+
+            const notification = new Notification('💧 测试通知', {
+                body: '这是一条测试通知，如果您看到了，说明通知功能正常工作！',
+                icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">💧</text></svg>',
+                tag: 'test',
+                requireInteraction: false
+            });
+
+            notification.onclick = function() {
+                showStatus('✅ 通知被点击了！', 'success');
+                notification.close();
+            };
+
+            setTimeout(() => {
+                notification.close();
+            }, 5000);
+
+            showStatus('✅ 测试通知已发送！', 'success');
+        }
+
+        function simulateReminder(time) {
+            if (Notification.permission !== 'granted') {
+                showStatus('⚠️ 请先请求通知权限', 'info');
+                return;
+            }
+
+            const notification = new Notification('💧 该喝水啦！', {
+                body: `现在是 ${time}，记得喝一杯水哦~`,
+                icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">💧</text></svg>',
+                tag: 'water-reminder',
+                requireInteraction: false
+            });
+
+            notification.onclick = function() {
+                window.focus();
+                notification.close();
+            };
+
+            setTimeout(() => {
+                notification.close();
+            }, 5000);
+
+            // 震动反馈
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
+            }
+
+            showStatus(`✅ 已发送 ${time} 的提醒通知`, 'success');
+        }
+
+        function clearTestData() {
+            localStorage.removeItem('sentRemindersToday');
+            showStatus('✅ 测试数据已清除', 'success');
+        }
+
+        // 显示当前通知权限状态
+        window.onload = function() {
+            if ('Notification' in window) {
+                const permission = Notification.permission;
+                if (permission === 'granted') {
+                    showStatus('✅ 通知权限已授予，可以进行测试', 'success');
+                } else if (permission === 'denied') {
+                    showStatus('❌ 通知权限被拒绝，请在浏览器设置中重新允许', 'info');
+                } else {
+                    showStatus('⚠️ 需要授予通知权限才能测试', 'info');
+                }
+            }
+        };
+    </script>
+</body>
+</html>

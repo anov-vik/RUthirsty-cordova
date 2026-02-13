@@ -1,0 +1,121 @@
+name: 构建 Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: '构建类型'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+          - debug
+          - release
+
+jobs:
+  build:
+    name: 构建喝水打卡 APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 检出代码
+        uses: actions/checkout@v4
+
+      - name: 🔧 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: ☕ 设置 Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: 📦 安装 Cordova CLI
+        run: |
+          npm install -g cordova@13.0.0
+          echo "Cordova 版本: $(cordova -v)"
+
+      - name: 📱 显示项目信息
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📱 应用名称: $(grep -oP '(?<=<name>)[^<]+' config.xml | head -1)"
+          echo "📌 应用版本: $(grep -oP '(?<=version=")[^"]+' config.xml | head -1)"
+          echo "🆔 包名: $(grep -oP '(?<=id=")[^"]+' config.xml | head -1)"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: 🔍 检查 Android 平台
+        run: |
+          if [ -d "platforms/android" ]; then
+            echo "✅ Android 平台已存在"
+          else
+            echo "➕ 添加 Android 平台"
+            cordova platform add android
+          fi
+
+      - name: 📋 检查环境要求
+        run: cordova requirements android || true
+
+      - name: 🏗️ 构建 APK (调试版本)
+        if: github.event.inputs.build_type != 'release'
+        run: |
+          echo "🔨 开始构建调试版本 APK..."
+          cordova build android --debug --verbose
+          echo "✅ 构建完成！"
+
+      - name: 🏗️ 构建 APK (发布版本)
+        if: github.event.inputs.build_type == 'release'
+        run: |
+          echo "🔨 开始构建发布版本 APK..."
+          cordova build android --release --verbose
+          echo "✅ 构建完成！"
+
+      - name: 📊 APK 信息
+        run: |
+          if [ "${{ github.event.inputs.build_type }}" == "release" ]; then
+            APK_PATH="platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk"
+          else
+            APK_PATH="platforms/android/app/build/outputs/apk/debug/app-debug.apk"
+          fi
+
+          if [ -f "$APK_PATH" ]; then
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "✅ APK 构建成功！"
+            echo "📍 位置: $APK_PATH"
+            echo "📦 大小: $(du -h "$APK_PATH" | cut -f1)"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            ls -lh "$APK_PATH"
+          else
+            echo "❌ 未找到 APK 文件"
+            exit 1
+          fi
+
+      - name: 📤 上传调试版 APK
+        if: github.event.inputs.build_type != 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: 喝水打卡-debug-${{ github.sha }}
+          path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      - name: 📤 上传发布版 APK
+        if: github.event.inputs.build_type == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: 喝水打卡-release-${{ github.sha }}
+          path: platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+          retention-days: 30
+
+      - name: 🎉 构建完成通知
+        run: |
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🎉 APK 构建成功！"
+          echo "📥 请在 Actions 页面的 Artifacts 部分下载"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
